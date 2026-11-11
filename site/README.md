@@ -1,5 +1,9 @@
 # Site de démonstration
 
+**Adresse publique : https://zenox-pr.github.io/DynamicIsland-Windows/**
+
+GitHub Pages sert l'export statique de la branche `gh-pages`, dossier racine. Pour le reconstruire dans PowerShell : `$env:NEXT_PUBLIC_BASE_PATH='/DynamicIsland-Windows'; npm run build`. Copier uniquement le contenu de `out/` vers la branche de déploiement, avec un fichier `.nojekyll` à sa racine. La branche `main` conserve les sources ; un changement de sources ne déploie pas automatiquement une nouvelle version. Pour un build local à la racine, enlever cette variable d'environnement avant de compiler.
+
 [Accueil du dépôt](../README.md) · [Application Windows](../windows/README.md)
 
 Site indépendant en Next.js, React et TypeScript strict. Il simule l'application dans le navigateur : aucun contrôle réel de Windows, aucun lancement de programme, aucune lecture de vos fichiers ou sessions GSMTC.

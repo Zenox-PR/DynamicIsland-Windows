@@ -1,5 +1,7 @@
 # Dynamic Island pour Windows
 
+**[Ouvrir la démonstration en ligne](https://zenox-pr.github.io/DynamicIsland-Windows/)**
+
 Une encoche native et discrète pour Windows 11, développée en Rust, accompagnée d'un site pour l'essayer et comprendre son code.
 
 > **Deux projets distincts dans ce dépôt.** L'application contrôle des fonctionnalités Windows ; le site en propose une simulation locale, sans accès aux sessions multimédias ou fichiers de votre ordinateur.
