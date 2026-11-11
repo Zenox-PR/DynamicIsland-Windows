@@ -1,0 +1,4 @@
+:HL["/DynamicIsland-Windows/_next/static/chunks/3z6c7tzbk74ix.css","style"]
+2:[["children",{"s":"__PAGE__","h":160}]]
+1:[["children",{"s":"code","h":96,"c":"$Q2"}]]
+0:{"b":"w2xYfY86Rzv34ciFFrRdo","t":{"t":{"s":"","h":80,"c":"$Q1"}}}

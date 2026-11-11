@@ -1,0 +1,29 @@
+1:"$Sreact.fragment"
+2:"/DynamicIsland-Windows/_next/static/chunks/3qfy96eoyh-ek.js"
+3:I[39756,["$2"],"default"]
+4:I[37457,["$2"],"default"]
+b:"/DynamicIsland-Windows/_next/static/chunks/2z2ihr8-o-zit.js"
+c:I[81910,["$2","$b"],"default"]
+d:I[97367,["$2"],"OutletBoundary"]
+e:"$Sreact.suspense"
+11:"ViewportBoundary"
+12:I[97367,["$2"],"$11"]
+13:"MetadataBoundary"
+14:I[97367,["$2"],"$13"]
+15:I[27201,["$2"],"IconMark"]
+:HL["/DynamicIsland-Windows/_next/static/chunks/3z6c7tzbk74ix.css","style"]
+6:X
+9:X
+9:C
+a:[["children",{"s":"__PAGE__","h":160,"d":{"r":["$","$1","c",{"children":[["$","main",null,{"id":"main","className":"wide-page","children":[["$","div",null,{"className":"page-heading","children":[["$","div",null,{"className":"eyebrow","children":"LE LABORATOIRE INTERACTIF"}],["$","h1",null,{"children":"À vous de jouer."}],["$","p",null,{"children":"Une simulation locale. Les vrais principes. Le vrai code."}]]}],["$","$Lc",null,{"detailed":true}],["$","p",null,{"className":"fineprint","children":"Le navigateur ne contrôle aucune session Windows. Médias silencieux et raccourcis fictifs. Le rendu web ne certifie pas le comportement natif, le DPI ou le multi-écrans."}]]}],[["$","script","script-0",{"src":"/DynamicIsland-Windows/_next/static/chunks/2z2ihr8-o-zit.js","async":true}]],["$","$Ld",null,{"children":["$","$e",null,{"name":"Next.MetadataOutlet","children":"$@f"}]}]]}],"p":"$@10","v":null,"s":"$6"}}]]
+7:[["children",{"s":"demo","h":96,"d":{"r":["$","$1","c",{"children":[null,["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}]}]]}],"p":"$@8","v":"$9","s":"$6"},"c":"$Qa"}]]
+0:{"t":{"t":{"s":"","h":80,"d":{"r":["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/DynamicIsland-Windows/_next/static/chunks/3z6c7tzbk74ix.css","precedence":"next"}],["$","script","script-0",{"src":"/DynamicIsland-Windows/_next/static/chunks/3qfy96eoyh-ek.js","async":true}]],["$","html",null,{"lang":"fr","children":["$","body",null,{"children":[["$","a",null,{"className":"skip","href":"#main","children":"Aller au contenu"}],["$","header",null,{"className":"header","children":[["$","a",null,{"href":"/DynamicIsland-Windows/","className":"brand","children":[["$","span",null,{"className":"brand-mark"}],"Dynamic Island",["$","span",null,{"className":"wordmark-detail","children":"pour Windows"}]]}],["$","nav",null,{"aria-label":"Navigation principale","children":[["$","a",null,{"href":"/DynamicIsland-Windows/#experience","children":"L’expérience"}],["$","a",null,{"href":"/DynamicIsland-Windows/sous-le-capot/","children":"Sous le capot"}],["$","a",null,{"href":"/DynamicIsland-Windows/histoire/","children":"Le projet"}]]}],["$","a",null,{"className":"nav-cta","href":"/DynamicIsland-Windows/demo/","children":["Essayer la démo ",["$","span",null,{"children":"↗"}]]}]]}],["$","$L3",null,{"parallelRouterKey":"children","template":["$","$L4",null,{}],"notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]]}],["$","footer",null,{"children":[["$","a",null,{"href":"/DynamicIsland-Windows/","className":"brand","children":[["$","span",null,{"className":"brand-mark"}],"Dynamic Island"]}],["$","p",null,{"children":"Un projet indépendant. Rust natif · Windows 11."}],["$","span",null,{"children":"Prototype local · Novembre 2026"}]]}]]}]}]]}],"p":"$@5","v":null,"s":"$6"},"c":"$Q7"},"h":{"r":["$","$1","h",{"children":[null,["$","$L12",null,{"children":[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]}],["$","$L14",null,{"children":[["$","div",null,{"hidden":true,"children":["$","$e",null,{"name":"Next.Metadata","children":[["$","title","0",{"children":"Dynamic Island — Une présence discrète."}],["$","meta","1",{"name":"description","content":"Explorez une encoche native pour Windows 11, développée en Rust. Démonstration locale et code expliqué."}],["$","link","2",{"rel":"icon","href":"/DynamicIsland-Windows/icon.svg?icon.17bf1o5lke2wj.svg","sizes":"any","type":"image/svg+xml"}],["$","$L15","3",{}]]}]}],null]}],null]}],"p":"$@16","v":null,"s":"$6"}},"a":"$@17","u":"$@18","b":"w2xYfY86Rzv34ciFFrRdo"}
+f:null
+6:300
+18:true
+6:C
+17:0
+8:"$undefined"
+5:"$undefined"
+16:"$undefined"
+10:"$undefined"
