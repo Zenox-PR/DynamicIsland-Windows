@@ -1,0 +1,6 @@
+[toolchain]
+# Installed and verified: rustc 1.99.1. No toolchain upgrade during the prototype.
+channel = "stable"
+profile = "minimal"
+components = ["rustfmt", "clippy", "rust-src"]
+targets = ["x86_64-pc-windows-msvc"]

@@ -1,0 +1,2 @@
+import Demo from '../../components/Demo';
+export default function Page(){return <main id="main" className="wide-page"><div className="page-heading"><div className="eyebrow">LE LABORATOIRE INTERACTIF</div><h1>À vous de jouer.</h1><p>Une simulation locale. Les vrais principes. Le vrai code.</p></div><Demo detailed/><p className="fineprint">Le navigateur ne contrôle aucune session Windows. Médias silencieux et raccourcis fictifs. Le rendu web ne certifie pas le comportement natif, le DPI ou le multi-écrans.</p></main>;}

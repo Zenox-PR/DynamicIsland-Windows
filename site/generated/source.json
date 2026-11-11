@@ -1,0 +1,92 @@
+[
+  {
+    "id": "transition",
+    "file": "windows/crates/island-core/src/lib.rs",
+    "line": 24,
+    "code": "    pub fn sample(&mut self, now: f64) -> f64 {\n        let t = if self.duration > 0.0 {\n            ((now - self.start) / self.duration).clamp(0.0, 1.0)\n        } else {\n            1.0\n        };\n        let smooth = t * t * (3.0 - 2.0 * t);\n        let target = if self.expanded { 1.0 } else { 0.0 };\n        self.value = self.from + (target - self.from) * smooth;\n        self.value\n    }\n\n    pub fn set(&mut self, expanded: bool, now: f64, animate: bool) {\n        self.sample(now);\n        if animate && self.expanded == expanded {\n            return; // Repeated close requests must not restart an in-flight animation.\n        }\n        self.from = self.value;\n        self.start = now;\n        self.expanded = expanded;\n        let target = if expanded { 1.0 } else { 0.0 };\n        let full_duration = if expanded {\n            OPEN_DURATION\n        } else {\n            CLOSE_DURATION\n        };\n        self.duration = full_duration * (target - self.from).abs();\n        if !animate {\n            self.duration = 0.0;\n            self.from = target;\n            self.value = self.from;\n        }\n    }",
+    "title": "Ouvrir et replier",
+    "description": "Une interpolation smoothstep, 220 ms à l’ouverture et 180 ms à la fermeture. Une inversion repart de la position courante.",
+    "sha256": "5638d1971d58c56c48beb7f2e300dfe95f13bb002bbcbefc4a31d7ab2b0d7b24"
+  },
+  {
+    "id": "concentration",
+    "file": "windows/crates/island-windows/src/concentration.rs",
+    "line": 9,
+    "code": "    pub(super) fn set_concentration(&mut self, enabled: bool) -> io::Result<()> {\n        if enabled == self.concentrating() {\n            return Ok(());\n        }\n        self.close_popover(false);\n        // Restore any in-flight drag's original placement before changing presentation.\n        self.finish_move(false)?;\n        self.move_armed = false;\n        self.suppress_release = true;\n        self.release_keyboard_focus(true);\n        // This mode switch is immediate. In-flight/queued animation ticks cannot reopen it.\n        self.transition.set(false, self.time(), false);\n        // SAFETY: all operations target this UI thread's own HWND/capture/hook only.\n        unsafe {\n            if GetFocus() == self.hwnd {\n                SetFocus(null_mut());\n            }\n            self.focused = false;\n            KillTimer(self.hwnd, FRAME);\n            if GetCapture() == self.hwnd && ReleaseCapture() == 0 {\n                return Err(io::Error::last_os_error());\n            }\n            if !self.mouse.is_null() {\n                if UnhookWindowsHookEx(self.mouse) == 0 {\n                    return Err(io::Error::last_os_error());\n                }\n                self.mouse = null_mut();\n            }\n            // SAFETY: UI-thread-owned live HWND, preserve every other extended style.\n            // Layered + TRANSPARENT routes input to windows in other processes as well.\n            SetLastError(0);\n            let old = GetWindowLongPtrW(self.hwnd, GWL_EXSTYLE);\n            if old == 0 && GetLastError() != 0 {\n                return Err(io::Error::last_os_error());\n            }\n            let new = if enabled {\n                old | WS_EX_TRANSPARENT as isize\n            } else {\n                old & !(WS_EX_TRANSPARENT as isize)\n            };\n            SetLastError(0);\n            if SetWindowLongPtrW(self.hwnd, GWL_EXSTYLE, new) == 0 && GetLastError() != 0 {\n                return Err(io::Error::last_os_error());\n            }\n            if SetWindowPos(\n                self.hwnd,\n                null_mut(),\n                0,\n                0,\n                0,\n                0,\n                SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED,\n            ) == 0\n            {\n                return Err(io::Error::last_os_error());\n            }\n        }\n        self.visibility.presentation = if enabled {\n            Presentation::Concentration\n        } else {\n            Presentation::Normal\n        };\n        self.render_key = None;\n        self.frame()\n    }",
+    "title": "Passer en concentration",
+    "description": "Le panneau se replie immédiatement, libère le geste et le focus, puis devient traversant aux clics. Dans cette démo, seuls les éléments du bureau virtuel reçoivent ces clics.",
+    "sha256": "0e4e0d9e7df70fea11040e607ce51b5e68eadac7a494b17e05371bdd7b55401e"
+  },
+  {
+    "id": "visibility",
+    "file": "windows/crates/island-core/src/visibility.rs",
+    "line": 24,
+    "code": "    pub fn hidden(&self) -> bool {\n        self.manual || self.fullscreen\n    }\n\n    pub fn form(&self) -> VisibleForm {\n        if self.hidden() {\n            VisibleForm::Hidden\n        } else {\n            match self.presentation {\n                Presentation::Normal => VisibleForm::Normal,\n                Presentation::Concentration => VisibleForm::Concentration,\n            }\n        }\n    }\n\n    pub fn restore_normal(&mut self) {\n        self.manual = false;\n        self.presentation = Presentation::Normal;\n        // Fullscreen is controlled only by the environment, never by a restore action.\n    }",
+    "title": "Masquer et restaurer",
+    "description": "Les causes de masquage sont indépendantes du mode visuel. Le plein écran reste prioritaire sur une restauration manuelle.",
+    "sha256": "cb822f51c06c4befc7ee924bd9d49e6aca627c411d8dad0470e02949e93b2cd7"
+  },
+  {
+    "id": "placement",
+    "file": "windows/crates/island-core/src/placement.rs",
+    "line": 65,
+    "code": "    pub fn update(&mut self, point: [i32; 2], threshold: [i32; 2]) -> Option<[i32; 2]> {\n        let delta = [point[0] - self.start[0], point[1] - self.start[1]];\n        self.moved |= delta[0].abs() >= threshold[0] || delta[1].abs() >= threshold[1];\n        self.moved\n            .then_some([self.anchor[0] + delta[0], self.anchor[1] + delta[1]])\n    }",
+    "title": "Déplacer l’encoche",
+    "description": "Le geste doit dépasser un seuil. Le relâchement valide la position ; Échap annule. Le navigateur conserve le déplacement dans les limites de la scène.",
+    "sha256": "e97503fd1a795698514020b7f7b22e7b79b8913e3ce40022764fd8e4d22fa8ef"
+  },
+  {
+    "id": "media",
+    "file": "windows/crates/island-windows/src/media.rs",
+    "line": 183,
+    "code": "    pub fn command(&self, id: u64, generation: u64, command: Command) -> bool {\n        let mut i = self.shared.input.lock().unwrap();\n        if i.command.is_some()\n            || i.stop\n            || i.disabled\n            || self.shared.busy.swap(true, Ordering::AcqRel)\n        {\n            return false;\n        }\n        i.command = Some(PendingCommand {\n            id,\n            generation,\n            action: command,\n            epoch: self.shared.epoch.load(Ordering::Acquire),\n        });\n        self.shared.wake.notify_one();\n        true\n    }",
+    "title": "Contrôler un média",
+    "description": "Le worker reçoit une commande bornée avec identité et génération. Ici, les commandes agissent exclusivement sur des sessions fictives et silencieuses.",
+    "sha256": "f42108eec6df63242f5dd7a855049e96a0c4a9a5113dacfc293f8f119e668fe2"
+  },
+  {
+    "id": "selection",
+    "file": "windows/crates/island-core/src/media.rs",
+    "line": 139,
+    "code": "pub fn select(\n    sessions: &[Session],\n    manual: Option<u64>,\n    current: Option<u64>,\n    previous: Option<u64>,\n) -> Option<u64> {\n    let exists = |id: Option<u64>| id.filter(|id| sessions.iter().any(|s| s.id == *id));\n    let playing = |id: Option<u64>| {\n        id.filter(|id| {\n            sessions\n                .iter()\n                .any(|s| s.id == *id && s.playback == Playback::Playing)\n        })\n    };\n    exists(manual)\n        .or_else(|| playing(current))\n        .or_else(|| playing(previous))\n        .or_else(|| {\n            sessions\n                .iter()\n                .find(|s| s.playback == Playback::Playing)\n                .map(|s| s.id)\n        })\n        .or_else(|| exists(current))\n        .or_else(|| exists(previous))\n        .or_else(|| sessions.first().map(|s| s.id))\n}",
+    "title": "Choisir une session",
+    "description": "La sélection native suit les sessions réellement exposées par GSMTC. Un lecteur absent de Windows ne peut pas être inventé par l’application.",
+    "sha256": "1c1419ec8d8cce5907ee597ca38a03312a18b40e6cedc165b7e1bb97ad4183a9"
+  },
+  {
+    "id": "modules",
+    "file": "windows/crates/island-core/src/modules.rs",
+    "line": 52,
+    "code": "    pub fn navigate(&mut self, page: Page) -> bool {\n        if (page == Page::Media && !self.media_enabled)\n            || (page == Page::Timer && !self.timer_enabled)\n            || (page == Page::Launcher && !self.launcher_enabled)\n        {\n            return false;\n        }\n        let changed = self.page != page;\n        self.page = page;\n        changed\n    }\n    pub fn set_enabled(&mut self, id: ModuleId, enabled: bool) {\n        match id {\n            ModuleId::Media => self.media_enabled = enabled,\n            ModuleId::Timer => self.timer_enabled = enabled,\n            ModuleId::Launcher => self.launcher_enabled = enabled,\n        }\n        if (!self.media_enabled && self.page == Page::Media)\n            || (!self.timer_enabled && self.page == Page::Timer)\n            || (!self.launcher_enabled && self.page == Page::Launcher)\n        {\n            self.page = Page::Home;\n        }\n    }",
+    "title": "Changer de module",
+    "description": "La navigation refuse une page désactivée ; la désactivation de la page active revient à l’accueil.",
+    "sha256": "33c168c64d3156328f16d24f5520542b841111fe4576a56189e9be829320d1b2"
+  },
+  {
+    "id": "timer",
+    "file": "windows/crates/island-core/src/timer.rs",
+    "line": 113,
+    "code": "    pub fn remaining(&self, now: u64) -> u64 {\n        match self.state {\n            State::Ready => self.duration(),\n            State::Finished => 0,\n            State::Running { deadline } => deadline.saturating_sub(now),\n            State::Paused { remaining } => remaining,\n        }\n    }\n    /// A delayed/duplicate callback emits at most one completion, never a chain of breaks.\n    pub fn settle(&mut self, now: u64) -> Option<Phase> {\n        if matches!(self.state, State::Running { deadline } if now >= deadline) {\n            self.state = State::Finished;\n            if self.phase == Phase::Work {\n                self.completed += 1;\n            }\n            Some(self.phase)\n        } else {\n            None\n        }\n    }\n    /// Call settle first, so UI coordination can deliver completion before changing state.\n    pub fn primary(&mut self, now: u64) {\n        match self.state {\n            State::Running { .. } => {\n                self.state = State::Paused {\n                    remaining: self.remaining(now),\n                };\n            }\n            State::Paused { remaining } => {\n                self.state = State::Running {\n                    deadline: now.saturating_add(remaining),\n                };\n            }\n            State::Ready | State::Finished => {\n                if self.state == State::Finished {\n                    self.phase = match self.phase {\n                        Phase::Countdown => Phase::Countdown,\n                        Phase::Work if self.completed == 4 => Phase::LongBreak,\n                        Phase::Work => Phase::ShortBreak,\n                        Phase::ShortBreak => Phase::Work,\n                        Phase::LongBreak => {\n                            self.completed = 0;\n                            Phase::Work\n                        }\n                    };\n                }\n                self.state = State::Running {\n                    deadline: now.saturating_add(self.duration()),\n                };\n            }\n        }\n    }\n    pub fn pause(&mut self, now: u64) {\n        if matches!(self.state, State::Running { .. }) {\n            self.primary(now);\n        }\n    }",
+    "title": "Piloter le temps",
+    "description": "Une échéance monotone remplace le comptage des ticks. Chaque nouvelle phase Pomodoro attend un démarrage explicite.",
+    "sha256": "fb45641164502b71d7b4ca3ee55c20419374b5d9e0df0f1737ecb2ffe2be7d72"
+  },
+  {
+    "id": "launcher",
+    "file": "windows/crates/island-core/src/launcher.rs",
+    "line": 175,
+    "code": "    pub fn upsert(&mut self, id: Option<u32>, mut entry: Entry) -> Result<u32, &'static str> {\n        entry.validate()?;\n        if let Some(id) = id {\n            let old = self\n                .entries\n                .iter_mut()\n                .find(|e| e.id == id)\n                .ok_or(\"Raccourci supprimé.\")?;\n            entry.id = id;\n            *old = entry;\n            Ok(id)\n        } else {\n            if self.entries.len() >= MAX_ENTRIES {\n                return Err(\"32 raccourcis maximum.\");\n            }\n            entry.id = self\n                .entries\n                .iter()\n                .map(|e| e.id)\n                .max()\n                .unwrap_or(0)\n                .checked_add(1)\n                .ok_or(\"Identifiants épuisés.\")?;\n            let id = entry.id;\n            self.entries.push(entry);\n            Ok(id)\n        }\n    }\n    pub fn remove(&mut self, id: u32) {\n        self.entries.retain(|e| e.id != id);\n    }\n    pub fn move_by(&mut self, id: u32, delta: isize) {\n        if let Some(i) = self.entries.iter().position(|e| e.id == id) {\n            let next = i.saturating_add_signed(delta).min(self.entries.len() - 1);\n            self.entries.swap(i, next);\n        }\n    }\n    pub fn visible(&self, favorites: bool) -> Vec<&Entry> {\n        self.entries\n            .iter()\n            .filter(|e| !favorites || e.favorite)\n            .collect()\n    }",
+    "title": "Organiser ses raccourcis",
+    "description": "Le catalogue natif est borné et validé. Les favoris présentés ici sont fictifs : aucun programme de votre ordinateur n’est lancé.",
+    "sha256": "47282fb81a5c1d679ff28eb7d58fd0126d3be868bfdcb160c4a28645e7aebb0a"
+  },
+  {
+    "id": "render",
+    "file": "windows/crates/island-ui/src/lib.rs",
+    "line": 55,
+    "code": "pub fn dimensions(progress: f64, scale: f64) -> (i32, i32, f64) {\n    let p = progress.clamp(0.0, 1.0);\n    (\n        ((COMPACT.0 as f64 + (EXPANDED.0 - COMPACT.0) as f64 * p) * scale).round() as i32,\n        ((COMPACT.1 as f64 + (EXPANDED.1 - COMPACT.1) as f64 * p) * scale).round() as i32,\n        (16.0 + 10.0 * p) * scale,\n    )\n}",
+    "title": "Dessiner la forme",
+    "description": "La largeur, la hauteur et le rayon suivent la même progression. Compact : 172 × 32 DIP ; déplié : 384 × 168 DIP.",
+    "sha256": "2310fc65b5d839c0a58c549b7e53e3d275b0014ad08e79b1b60421440c55e60a"
+  }
+]

@@ -1,0 +1,16 @@
+**/target/
+**/node_modules/
+**/.next/
+**/out/
+**/.npm-cache/
+**/test-results/
+**/*.tsbuildinfo
+**/.playwright-mcp/
+**/artifacts/
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.dmp
+*.etl
